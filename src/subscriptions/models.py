@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.forms import ValidationError
 from django.utils import timezone
 
 from config import settings
@@ -31,15 +32,19 @@ class Subscription(models.Model):
                             on_delete=models.PROTECT, 
                             related_name='user_subscriptions')
     start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True, db_index=True)
     
     def __str__(self):
         return f'{self.user.email} - {self.plan.name}'
 
     def save(self, *args, **kwargs):
-        if not self.end_date:
+        if not self.end_date or self.pk is None:
             self.end_date = timezone.now() + timedelta(days=self.plan.duration_days)
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if self.end_date and self.start_date and self.end_date <= self.start_date:
+            raise ValidationError('End date has to be later than start date')
 
     @property
     def is_active(self):
