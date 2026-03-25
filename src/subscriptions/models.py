@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.forms import ValidationError
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from config import settings
