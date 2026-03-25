@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from config import settings
+from config.components.base_settings import AUTH_USER_MODEL
 
 
 class SubscriptionPlan(models.Model):
@@ -25,7 +25,7 @@ class SubscriptionPlan(models.Model):
         return self.name
     
 class Subscription(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+    user = models.ForeignKey(AUTH_USER_MODEL, 
                             on_delete=models.CASCADE, 
                             related_name='subscriptions')
     plan = models.ForeignKey(SubscriptionPlan, 
@@ -38,7 +38,6 @@ class Subscription(models.Model):
         return f'{self.user.email} - {self.plan.name}'
 
     def save(self, *args, **kwargs):
-        # if not self.end_date or self.pk is None:
         if not self.end_date:
             self.end_date = timezone.now() + timedelta(days=self.plan.duration_days)
         super().save(*args, **kwargs)
