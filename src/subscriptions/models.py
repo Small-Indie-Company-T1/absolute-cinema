@@ -38,7 +38,8 @@ class Subscription(models.Model):
         return f'{self.user.email} - {self.plan.name}'
 
     def save(self, *args, **kwargs):
-        if not self.end_date or self.pk is None:
+        # if not self.end_date or self.pk is None:
+        if not self.end_date:
             self.end_date = timezone.now() + timedelta(days=self.plan.duration_days)
         super().save(*args, **kwargs)
 
