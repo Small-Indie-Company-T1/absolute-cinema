@@ -100,7 +100,7 @@ AUTH_USER_MODEL = 'users.User'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -111,3 +111,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+CORS_ALLOW_ALL_ORIGINS = True # FIXME пока что так
