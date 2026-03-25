@@ -7,5 +7,5 @@ class HasActiveSubscription(permissions.BasePermission):
     def has_permission(self, request, view) -> bool: # type: ignore
         if not request.user or not request.user.is_authenticated:
             return False
-        return request.user.subscriptions.filter(end_date__gt=timezone.now()).exists()
+        return request.user.subscriptions.active.exists()
     
