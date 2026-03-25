@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -33,6 +33,9 @@ class Subscription(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(blank=True, null=True)
     
+    def __str__(self):
+        return f'{self.user.email} - {self.plan.name}'
+
     def save(self, *args, **kwargs):
         if not self.end_date:
             self.end_date = timezone.now() + timedelta(days=self.plan.duration_days)
@@ -42,5 +45,5 @@ class Subscription(models.Model):
     def is_active(self):
         if not self.end_date:
             return False
-        return self.end_date > datetime.now()
+        return self.end_date > timezone.now()
     
