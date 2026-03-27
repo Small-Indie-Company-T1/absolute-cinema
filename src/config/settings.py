@@ -47,6 +47,10 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'src.exceptions.custom_exception_handler',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
+
 }
 
 MIDDLEWARE = [
