@@ -8,6 +8,13 @@ from django.utils import timezone
 from config.components.base_settings import AUTH_USER_MODEL
 
 
+class SubscriptionManager(models.Manager):
+    def active(self):
+        return self.filter(end_date__gt=timezone.now())
+    
+    def for_user(self, user):
+        return self.filter(user=user)
+
 class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название плана')
     description = models.TextField(blank=True, verbose_name='Описание')
@@ -34,6 +41,8 @@ class Subscription(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(blank=True, null=True, db_index=True)
     
+    objects = SubscriptionManager()
+
     def __str__(self):
         return f'{self.user.email} - {self.plan.name}'
 
