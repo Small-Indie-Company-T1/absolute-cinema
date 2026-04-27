@@ -8,6 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(subscription_router.urls)),
     path('api/users/', include(users_router.urls)),
-
     path('api/users/', include('users.urls')),
+    path('api/', include('catalog.urls')),
 ]
