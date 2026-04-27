@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 
 class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -26,18 +25,3 @@ class Movie(models.Model):
         verbose_name = "Фильм"
         verbose_name_plural = "Фильмы"
         ordering = ['-release_date']
-
-class Watchlist(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="watchlist")
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="in_watchlist")
-    added_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ["user", "movie"] # Нельзя добавить фильм дважды
-        verbose_name = "Список просмотра"
-        verbose_name_plural = "Списки просмотра"
-    def __str__(self):
-        return f"{self.user.email}-{self.movie.title}"
-
-
-

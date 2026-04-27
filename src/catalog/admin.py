@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Genre, Movie, Watchlist
+from .models import Genre, Movie
+
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
@@ -9,12 +10,6 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "release_date", "duration"]
-    list_filter = ["release_date", "genres"]
+    list_filter = ["release_date", "genre"]
     search_fields = ["title", "description"]
-    filter_horizontal = ["genres"]
-
-@admin.register(Watchlist)
-class WatchlistAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "movie", "added_at"]
-    search_fields = ["added_at"]
-    filter_horizontal = ["user_email", "movie_title"]
+    filter_horizontal = ["genre"]

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Movie, Watchlist
+from .models import Genre, Movie
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,7 +7,7 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description"]
 
 class MovieSerializer(serializers.ModelSerializer):
-    genres = serializers.SerializerMethodField(many=True)
+    genres = serializers.SerializerMethodField()
 
     class Meta:
         model = Movie
@@ -18,11 +18,3 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = "__all__"
-
-class AddToWatchlistSerializer(serializers.ModelSerializer):
-    movie_id = serializers.IntegerField()
-
-    def validate_movie_id(self, value):
-        if not Movie.objects.filter(id=value).exists():
-            raise serializers.ValidationError("Фильма с таким айди нет")
-        return value
