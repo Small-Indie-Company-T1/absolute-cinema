@@ -2,6 +2,7 @@ from django.db import IntegrityError
 from ..models import Watchlist
 from catalog.models import Movie
 
+
 def add_movie_to_watchlist(user, movie_id):
     try:
         movie = Movie.objects.get(id=movie_id)
@@ -9,7 +10,9 @@ def add_movie_to_watchlist(user, movie_id):
         return None, "Фильм не найден."
 
     try:
-        watchlist_entry, created = Watchlist.objects.get_or_create(user=user, movie=movie)
+        watchlist_entry, created = Watchlist.objects.get_or_create(
+            user=user, movie=movie
+        )
 
         if created:
             return watchlist_entry, None

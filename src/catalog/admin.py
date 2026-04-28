@@ -7,6 +7,7 @@ class GenreAdmin(admin.ModelAdmin):
     list_display = ["id", "name"]
     search_fields = ["name"]
 
+
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "release_date", "duration"]

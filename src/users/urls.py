@@ -5,9 +5,9 @@ from .views import UserViewSet, MyTokenObtainPairView
 
 
 router = DefaultRouter()
-router.register('', UserViewSet, basename='users')
+router.register("", UserViewSet, basename="users")
 urlpatterns = [
-    path('login/', MyTokenObtainPairView.as_view(), name='login'),
-    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('', include(router.urls)),
+    path("login/", MyTokenObtainPairView.as_view(), name="login"),
+    path("login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("", include(router.urls)),
 ]

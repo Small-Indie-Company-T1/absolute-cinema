@@ -5,14 +5,15 @@ from rest_framework.filters import SearchFilter
 from .models import Movie
 from .serializers import MovieSerializer, MovieDetailSerializer
 
+
 class MovieViewSet(viewsets.ModelViewSet):
-    queryset = Movie.objects.all().prefetch_related('genre')
+    queryset = Movie.objects.all().prefetch_related("genre")
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['genre', 'release_date']
-    search_fields = ['title', 'description']
+    filterset_fields = ["genre", "release_date"]
+    search_fields = ["title", "description"]
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return MovieDetailSerializer
         return MovieSerializer

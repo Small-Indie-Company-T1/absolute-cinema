@@ -6,8 +6,7 @@ from interactions.models import Watchlist
 class WatchlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Watchlist
-        fields = ['id', 'movie', 'added_at']
-        read_only_fields = ['added_at']
+        fields = ["id", "movie", "added_at"]
+        read_only_fields = ["added_at"]
 
-    def validate(self, data):
-        ...
+    def validate(self, data): ...
