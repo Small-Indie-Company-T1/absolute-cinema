@@ -6,21 +6,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0001_initial'),
-        ('interactions', '0001_initial'),
+        ("catalog", "0001_initial"),
+        ("interactions", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='watchlist',
-            name='movie',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='catalog.movie'),
+            model_name="watchlist",
+            name="movie",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="catalog.movie",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='watchlist',
-            unique_together={('user', 'movie')},
+            name="watchlist",
+            unique_together={("user", "movie")},
         ),
     ]

@@ -6,28 +6,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0001_initial'),
-        ('interactions', '0002_watchlist_movie_alter_watchlist_unique_together'),
+        ("catalog", "0001_initial"),
+        ("interactions", "0002_watchlist_movie_alter_watchlist_unique_together"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='watchlist',
-            name='watched',
+            model_name="watchlist",
+            name="watched",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='watchlist',
-            name='movie',
-            field=models.ForeignKey(default=132, on_delete=django.db.models.deletion.CASCADE, related_name='in_watchlist', to='catalog.movie'),
+            model_name="watchlist",
+            name="movie",
+            field=models.ForeignKey(
+                default=132,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="in_watchlist",
+                to="catalog.movie",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='watchlist',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='watchlist', to=settings.AUTH_USER_MODEL),
+            model_name="watchlist",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="watchlist",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
