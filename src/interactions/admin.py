@@ -4,6 +4,7 @@ from .domain.models import Watchlist
 
 @admin.register(Watchlist)
 class WatchlistAdmin(admin.ModelAdmin):
-    list_display = ('user', 'movie', 'added_at')
+    list_display = ('user', 'movie', 'watched', 'added_at')
     search_fields = ('user__username', 'movie__title')
-    list_filter = ('added_at',)
+    list_filter = ('added_at', 'watched')
+    ordering = ('-added_at',)
