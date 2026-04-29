@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from interactions.domain.exceptions import MovieNotFound, MovieAlreadyInWatchlist
+from subscriptions.services import SubscriptionAlreadyActive
 
 
 def custom_exception_handler(exc, ctx):
@@ -17,6 +18,12 @@ def custom_exception_handler(exc, ctx):
     if isinstance(exc, MovieAlreadyInWatchlist):
         return Response(
             {'status': 'error', 'code': 400, 'message': 'Фильм уже в списке просмотра'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if isinstance(exc, SubscriptionAlreadyActive):
+        return Response(
+            {'status': 'error', 'code': 400, 'message': str(exc)},
             status=status.HTTP_400_BAD_REQUEST
         )
 

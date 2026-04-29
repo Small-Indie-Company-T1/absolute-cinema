@@ -5,6 +5,7 @@ from rest_framework import status, viewsets
 
 from subscriptions.serializers import SubscriptionSerializer, SubscribeSerializer
 from subscriptions.models import SubscriptionPlan, Subscription
+from subscriptions.services import subscribe_user_to_plan
 
 
 class SubscribeViewSet(viewsets.GenericViewSet):
@@ -16,16 +17,11 @@ class SubscribeViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        plan_id = serializer.validated_data["plan_id"]
-        plan = SubscriptionPlan.objects.get(pk=plan_id)
+        subscription = subscribe_user_to_plan(
+            request.user, serializer.validated_data.get('plan_id')
+        )
 
-        if Subscription.objects.active().filter(user=request.user, plan=plan).exists():
-            return Response(
-                {"warning": "Current plan is already active."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        subscription = Subscription.objects.create(user=request.user, plan=plan)
-
-        response_serializer = SubscriptionSerializer(subscription)
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            SubscriptionSerializer(subscription).data,
+            status=status.HTTP_201_CREATED
+        )
