@@ -23,7 +23,8 @@ def custom_exception_handler(exc, ctx):
 
     if isinstance(exc, SubscriptionAlreadyActive):
         return Response(
-            {'status': 'error', 'code': 400, 'message': str(exc)}
+            {'status': 'error', 'code': 400, 'message': str(exc)},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     if response is not None:
