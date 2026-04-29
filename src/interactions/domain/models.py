@@ -18,4 +18,4 @@ class Watchlist(models.Model):
         verbose_name_plural = "Избранное"
 
     def __str__(self):
-        return f"{self.user.username} - {self.movie.title}"
+        return f"{self.user.email} - {self.movie.title}"
