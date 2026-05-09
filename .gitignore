@@ -137,9 +137,10 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+django_project/.env
 .envrc
-.venv
+django_project/.venv
+fastapi_service/.venv
 env/
 venv/
 ENV/
