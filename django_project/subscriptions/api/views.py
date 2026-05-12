@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 
-from subscriptions.serializers import SubscriptionSerializer, SubscribeSerializer
-from subscriptions.models import SubscriptionPlan, Subscription
-from subscriptions.services import subscribe_user_to_plan
+from subscriptions.api.serializers import SubscriptionSerializer, SubscribeSerializer
+from subscriptions.services.services import subscribe_user_to_plan
 
 
 class SubscribeViewSet(viewsets.GenericViewSet):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from subscriptions.models import SubscriptionPlan, Subscription
+from subscriptions.domain.models import SubscriptionPlan, Subscription
 
 
 @admin.register(SubscriptionPlan)

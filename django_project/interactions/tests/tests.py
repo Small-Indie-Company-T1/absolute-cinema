@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from interactions.domain.models import Watchlist
-from catalog.models import Movie
+from catalog.domain.models import Movie
 from interactions.services.services import (
     add_movie_to_watchlist,
     remove_movie_from_watchlist,

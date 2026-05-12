@@ -3,11 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from interactions.domain.exceptions import MovieNotFound, MovieAlreadyInWatchlist
-from subscriptions.services import SubscriptionAlreadyActive
+from subscriptions.domain.exceptions import SubscriptionAlreadyActive
+from catalog.domain.exceptions import MovieNotFound as CatalogMovieNotFound
 
 
 def custom_exception_handler(exc, ctx):
     response = exception_handler(exc, ctx)
+
+    if isinstance(exc, CatalogMovieNotFound):
+        return Response(
+            {'status': 'error', 'code': 404, 'message': 'Фильм не найден'},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
     if isinstance(exc, MovieNotFound):
         return Response(

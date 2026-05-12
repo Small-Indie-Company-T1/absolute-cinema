@@ -4,7 +4,9 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+
 from .serializers import UserSerializer, UserCreateSerializer
+from ..services.services import UserService
 
 User = get_user_model()
 
@@ -21,7 +23,9 @@ class UserViewSet(viewsets.GenericViewSet):
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        data = serializer.validated_data.copy()
+        data.pop('password_confirm')
+        user = UserService.create_user(**data)
 
         response_serializer = UserSerializer(user)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
@@ -33,7 +37,8 @@ class UserViewSet(viewsets.GenericViewSet):
         url_path="me",
     )
     def me(self, request):
-        serializer = self.get_serializer(request.user)
+        user = UserService.get_user_details(request.user)
+        serializer = self.get_serializer(user)
         return Response(serializer.data)
 
 

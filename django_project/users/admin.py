@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
-from subscriptions.models import Subscription
+from .domain.models import User
+from subscriptions.domain.models import Subscription
 
 
 class SubscriptionInline(admin.TabularInline):

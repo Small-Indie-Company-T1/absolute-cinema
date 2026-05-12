@@ -1,4 +1,4 @@
-from catalog.models import Movie
+from catalog.domain.models import Movie
 from ..domain.models import Watchlist
 from ..domain.exceptions import MovieNotFound, MovieAlreadyInWatchlist
 

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from rest_framework import serializers
-from subscriptions.models import Subscription, SubscriptionPlan
+from subscriptions.domain.models import Subscription, SubscriptionPlan
 from django.utils import timezone
 
 

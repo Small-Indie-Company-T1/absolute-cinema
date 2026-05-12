@@ -1,8 +1,6 @@
-from subscriptions.models import Subscription, SubscriptionPlan
+from subscriptions.domain.models import Subscription, SubscriptionPlan
+from subscriptions.domain.exceptions import SubscriptionAlreadyActive
 
-
-class SubscriptionAlreadyActive(Exception):
-    ...
 
 def subscribe_user_to_plan(user, plan_id):
     plan = SubscriptionPlan.objects.get(pk=plan_id)

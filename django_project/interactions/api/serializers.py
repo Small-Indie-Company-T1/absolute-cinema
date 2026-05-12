@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from catalog.models import Movie
+from catalog.domain.models import Movie
 from ..domain.models import Watchlist
 
 
