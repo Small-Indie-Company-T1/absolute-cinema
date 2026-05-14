@@ -1,4 +1,4 @@
-src/movie_poster
+django_project/movie_poster
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
