@@ -24,6 +24,7 @@ class Movie(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_free = models.BooleanField(default=False, null=True)
 
     def __str__(self):
         return self.title
