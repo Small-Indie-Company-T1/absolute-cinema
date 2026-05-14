@@ -3,10 +3,11 @@ from fastapi import APIRouter, Query
 from app.schemas.search import SearchResult
 from app.services.client_service import CatalogClient
 from app.services.search_service import SearchService
+from app.core.config import settings
 
 
 router = APIRouter(prefix='/api/v1')
-catalog_client = CatalogClient(base_url='http://localhost:8000') # FIXME
+catalog_client = CatalogClient(settings.BASE_URL)
 search_service = SearchService(catalog_client)
 
 
