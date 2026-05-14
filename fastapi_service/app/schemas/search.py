@@ -1,6 +1,8 @@
+from typing import List
+
 from pydantic import BaseModel, Field
 
-from app.schemas.other import MovieList
+from app.schemas.other import MovieOut
 
 
 class SearchQuery(BaseModel):
@@ -11,5 +13,5 @@ class SearchQuery(BaseModel):
     limit: int = Field(default=10, ge=1, le=50)
 
 class SearchResult(BaseModel):
-    items: MovieList | list
+    items: List[MovieOut] | list
     total: int

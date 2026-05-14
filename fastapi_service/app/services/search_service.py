@@ -1,7 +1,7 @@
 from typing import List
 
 from app.services.client_service import CatalogClient
-from app.schemas.other import MovieList
+from app.schemas.other import MovieOut
 from app.schemas.search import SearchResult
 
 
@@ -11,12 +11,12 @@ class SearchService:
 
     async def filter_movies(
         self,
-        movies: MovieList,
+        movies: List[MovieOut],
         genre_id: int | None,
         year_from: int | None,
         year_to: int | None
-    ) -> MovieList:
-        filtered: MovieList = []
+    ) -> List[MovieOut]:
+        filtered: List[MovieOut] = []
 
         for movie in movies:
             if genre_id is not None:
@@ -37,10 +37,10 @@ class SearchService:
 
     def text_search(
         self,
-        movies: MovieList,
+        movies: List[MovieOut],
         q: str,
         limit: int
-    ) -> MovieList:
+    ) -> List[MovieOut]:
         q_norm = q.lower().strip()
         scored = []
         for movie in movies:

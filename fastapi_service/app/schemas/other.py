@@ -13,14 +13,8 @@ class MovieOut(BaseModel):
     title: str
     description: str
     release_date: date
-    duration: int
-    genres: List[GenreOut]
-
-class MovieList(BaseModel):
-    id: int
-    title: str
-    release_date: date
-    description: str
+    duration: int | None = None
+    poster: str | None = None
     genres: List[GenreOut]
 
 class ErrorDetail(BaseModel):

@@ -1,17 +1,17 @@
-from typing import Tuple
+from typing import List
 
 from pydantic import BaseModel
 
-from app.schemas.other import MovieShortOut
+from app.schemas.other import MovieOut
 
 
 class RecommendationItem(BaseModel):
-    movie: MovieShortOut
+    movie: MovieOut
     score: float
     reason: str
 
 class RecommendationResponse(BaseModel):
-    items: Tuple[RecommendationItem]
+    items: List[RecommendationItem]
 
 class RebuildRecommendationRequest(BaseModel):
     user_id: int
