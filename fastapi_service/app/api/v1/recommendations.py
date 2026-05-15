@@ -7,8 +7,8 @@ from app.core.config import settings
 
 
 router = APIRouter(prefix='/api/v1')
-catalog_client = CatalogClient(settings.BASE_URL)
-watchlist_client = WatchlistClient(settings.BASE_URL)
+catalog_client = CatalogClient(settings.django_api_url)
+watchlist_client = WatchlistClient(settings.django_api_url)
 recommendation_service = RecommendationService(catalog_client, watchlist_client)
 
 

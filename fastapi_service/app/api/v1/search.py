@@ -7,7 +7,7 @@ from app.core.config import settings
 
 
 router = APIRouter(prefix='/api/v1')
-catalog_client = CatalogClient(settings.BASE_URL)
+catalog_client = CatalogClient(settings.django_api_url)
 search_service = SearchService(catalog_client)
 
 

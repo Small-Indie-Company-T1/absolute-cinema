@@ -12,7 +12,7 @@ class CatalogClient:
         self.base_url = base_url.rstrip('/')
 
     async def get_movie(self, movie_id: int) -> MovieOut:
-        url = f'{self.base_url}/api/movies/{movie_id}/'
+        url = f'{self.base_url}/movies/{movie_id}/'
         async with httpx.AsyncClient(timeout=5.0) as client:
             response = await client.get(url)
 
@@ -26,7 +26,7 @@ class CatalogClient:
         return MovieOut.model_validate(data)
 
     async def get_all_movies(self) -> List[MovieOut]:
-        url = f'{self.base_url}/api/movies/'
+        url = f'{self.base_url}/movies/'
         all_movies = []
         
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -52,7 +52,7 @@ class WatchlistClient:
         self.base_url = base_url.rstrip('/')
 
     async def get_watchlist_ids(self, token: str) -> List[int]:
-        url = f'{self.base_url}/api/interactions/watchlist/'
+        url = f'{self.base_url}/interactions/watchlist/'
 
         movies_ids: List[int] = []
 
