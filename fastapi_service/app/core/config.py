@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     cors_origins: list = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
+    debug: bool = True
+
     class Config:
         env_file = ".env"
         case_sensitive = False

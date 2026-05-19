@@ -17,9 +17,7 @@ class MovieOut(BaseModel):
     poster: str | None = None
     genres: List[GenreOut]
 
-class ErrorDetail(BaseModel):
-    code: str
-    message: str
-
 class ErrorResponse(BaseModel):
-    detail: ErrorDetail
+    error: str
+    detail: str | None = None
+    status_code: int
