@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # Application definition
+FASTAPI_SERVICE_URL = "http://localhost:8001"
 
 include(
     "components/apps.py",

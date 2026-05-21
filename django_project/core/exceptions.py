@@ -5,7 +5,7 @@ from rest_framework import status
 from interactions.domain.exceptions import MovieNotFound, MovieAlreadyInWatchlist
 from subscriptions.domain.exceptions import SubscriptionAlreadyActive
 from catalog.domain.exceptions import MovieNotFound as CatalogMovieNotFound
-
+from catalog.domain.exceptions import RecommendationServiceError
 
 def custom_exception_handler(exc, ctx):
     response = exception_handler(exc, ctx)
@@ -35,11 +35,13 @@ def custom_exception_handler(exc, ctx):
         )
 
     if response is not None:
-        data = {
-            'status': 'error',
-            'code': response.status_code,
-            'message': response.data
-        }
+        data = {'status': 'error','code': response.status_code,'message': response.data}
         response.data = data
+
+    if isinstance(exc, RecommendationServiceError):
+        return Response(
+            {'status': 'error', 'code': 503, 'message': 'Сервис рекомендаций временно недоступен'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
 
     return response
