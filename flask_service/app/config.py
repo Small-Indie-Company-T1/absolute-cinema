@@ -1,0 +1,9 @@
+import os
+
+
+class Config:
+    DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+    HOST = os.getenv('HOST', 'localhost')
+    PORT = int(os.getenv('PORT', 5000))
+
+    DJANGO_API_URL = os.getenv('DJANGO_API_URL', 'http://localhost:8000/api')
