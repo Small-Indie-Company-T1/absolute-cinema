@@ -15,6 +15,7 @@ dependencies = [
     "djangorestframework-stubs>=3.16.9",
     "pillow>=12.2.0",
     "python-dotenv==1.2.2",
+    "requests>=2.34.2",
     "sqlparse==0.5.5",
     "tzdata==2025.3",
 ]

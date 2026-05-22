@@ -1,13 +1,16 @@
 from collections import Counter
+import logging
 
 from app.services.client_service import CatalogClient, WatchlistClient
 from app.schemas.recommendations import RecommendationItem, RecommendationResponse
 
+logger = logging.getLogger(__name__)
 
 class RecommendationService:
     def __init__(self, catalog_service: CatalogClient, watchlist_service: WatchlistClient):
         self.catalog_service = catalog_service
         self.watchlist_service = watchlist_service
+        self.cache: dict[int, list[RecommendationItem]] = {}
 
     async def get_similar_movies(self, target_id, limit=10):
         target = await self.catalog_service.get_movie(target_id)
@@ -24,7 +27,9 @@ class RecommendationService:
             overlap = len(matched)
             if overlap > 0:
                 score = float(overlap)
-                reason = f'Совпали жанры: {", ".join(str(list(matched)[:3]))}'
+                target_genre_map = {genre.id: genre.name for genre in target.genres}
+                matched_names = [target_genre_map[g_id] for g_id in matched]
+                reason = f'Совпали жанры: {", ".join(matched_names[:3])}'
                 results.append((movie, score, reason))
         
         results.sort(key=lambda item: (item[1], item[0].release_date), reverse=True)
@@ -44,7 +49,9 @@ class RecommendationService:
                 counter[genre.id] += 1
         return counter
 
-    async def get_personal_recommendations(self, token: str, limit=10) -> RecommendationResponse:
+    async def get_personal_recommendations(
+        self, user_id: int, token: str, limit: int = 10
+    ) -> RecommendationResponse:
         watchlist = await self.watchlist_service.get_watchlist_movies(token)
         excluded_ids = {movie.id for movie in watchlist}
         genre_profiles = self.build_genre_profile(watchlist)
@@ -68,4 +75,18 @@ class RecommendationService:
                 item = RecommendationItem(movie=movie, score=score, reason=reason)
                 results.append(item)
         results.sort(key=lambda item: (item.score, item.movie.release_date), reverse=True)
+        logger.info(f'Formed recommendations for user: {user_id}')
         return RecommendationResponse(items=results[:limit])
+
+    async def rebuild_recommendations_for_user(
+        self, user_id: int, token: str, limit: int = 10
+    ):
+        result = await self.get_personal_recommendations(user_id=user_id, token=token, limit=limit)
+        self.cache[user_id] = result.items
+        return result
+
+    def get_cached_recommendations(self, user_id: int) -> RecommendationResponse | None:
+        items = self.cache.get(user_id)
+        if items is None:
+            return None
+        return RecommendationResponse(items=items)

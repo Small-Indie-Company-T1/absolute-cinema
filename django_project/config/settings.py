@@ -1,4 +1,5 @@
 from pathlib import Path
+from dotenv import load_dotenv
 from split_settings.tools import include
 from datetime import timedelta
 
@@ -10,6 +11,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # Application definition
+FASTAPI_SERVICE_URL = "http://localhost:8001"
+
+load_dotenv(BASE_DIR / ".env")
 
 include(
     "components/apps.py",

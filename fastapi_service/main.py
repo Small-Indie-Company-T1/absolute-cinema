@@ -9,6 +9,8 @@ from app.api.v1.search import router as search_router
 from app.api.v1.recommendations import router as recommendations_router
 from app.core.config import settings
 from app.schemas.other import ErrorResponse
+from app.core.exceptions.client_exceptions import CatalogClientError, WatchlistClientError
+from app.core.exceptions.movie_exceptions import MovieNotFound
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -37,10 +39,46 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router, tags=["authentication"])
+# app.include_router(auth_router, tags=["authentication"])
 app.include_router(search_router, tags=["search"])
 app.include_router(recommendations_router, tags=["recommendations"])
 
+
+@app.exception_handler(MovieNotFound)
+async def movie_not_found_handler(request: Request, exc: MovieNotFound):
+    logger.error(f'Movie not found: {exc.message}', exc_info=True)
+    return JSONResponse(
+        status_code=404,
+        content=ErrorResponse(
+            error='Movie not found',
+            detail = str(exc),
+            status_code=404
+        ).model_dump()
+    )
+
+@app.exception_handler(CatalogClientError)
+async def movie_not_found_handler(request: Request, exc: CatalogClientError):
+    logger.error(f'Catalog service error: {exc.message}', exc_info=True)
+    return JSONResponse(
+        status_code=502,
+        content=ErrorResponse(
+            error='Catalog service unavailable',
+            detail = str(exc),
+            status_code=502
+        ).model_dump()
+    )
+
+@app.exception_handler(WatchlistClientError)
+async def movie_not_found_handler(request: Request, exc: WatchlistClientError):
+    logger.error(f'Watchlist service unavailable: {exc.message}', exc_info=True)
+    return JSONResponse(
+        status_code=502,
+        content=ErrorResponse(
+            error='Watchlist service unavailable',
+            detail = str(exc),
+            status_code=502
+        ).model_dump()
+    )
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):

@@ -79,9 +79,6 @@ class WatchlistClient:
 
     async def get_watchlist_movies(self, token: str) -> List[MovieOut]:
         catalog = CatalogClient(self.base_url)
-        ids = await self.get_watchlist_ids(token)
-        movies = []
-        for id in ids:
-            movie = await catalog.get_movie(id)
-            movies.append(movie)
-        return movies
+        ids = set(await self.get_watchlist_ids(token))
+        movies = await catalog.get_all_movies()
+        return [movie for movie in movies if movie.id in ids]
