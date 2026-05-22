@@ -5,7 +5,10 @@ from app.schemas.auth import TokenData
 from .config import settings
 from jose import jwt, JWTError
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"/api/users/login/",
+    auto_error=False
+)
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):

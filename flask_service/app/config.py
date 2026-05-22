@@ -1,5 +1,7 @@
 import os
+from dotenv import load_dotenv, find_dotenv
 
+load_dotenv(find_dotenv('flask_service/.env'))
 
 class Config:
     DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
