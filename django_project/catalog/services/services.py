@@ -89,7 +89,7 @@ class MovieService:
             if response.status_code == 502:
                 logger.error("Recommendation service upstream error")
                 raise RecommendationServiceError("Recommendation service upstream error")
-            if response.status_code not in (202,):
+            if response.status_code not in (202,201,200):
                 logger.error(f"FastAPI returned error status: {response.status_code}")
                 raise RecommendationServiceError(f"FastAPI returned status {response.status_code}")
 
