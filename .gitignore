@@ -141,6 +141,7 @@ django_project/.env
 .envrc
 django_project/.venv
 fastapi_service/.venv
+flask_service/.venv
 env/
 venv/
 ENV/
