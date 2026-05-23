@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from ..services.services import MovieService
-from .serializers import MovieDetailSerializer, MovieSerializer
+from .serializers import MovieDetailSerializer, MovieSerializer, FastAPISearchResponseSerializer
 
 
 class MovieViewSet(viewsets.ReadOnlyModelViewSet):
@@ -50,4 +50,26 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
         auth_header = request.headers.get('Authorization')
         result = MovieService.rebuild_user_recommendations(request.user, auth_header)
         return Response(result, status=status.HTTP_202_ACCEPTED)
-    
+
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path='search'
+    )
+    def search(self, request):
+        data = MovieService.search_movies(
+            q=request.query_params.get("q"),
+            genre_id=request.query_params.get("genre_id"),
+            year_from=request.query_params.get("year_from"),
+            year_to=request.query_params.get("year_to"),
+            limit=request.query_params.get("limit", 10)
+        )
+
+        serializer = FastAPISearchResponseSerializer(
+            instance=data
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )

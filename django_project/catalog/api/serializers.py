@@ -32,3 +32,32 @@ class MovieDetailSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+
+
+class FastAPIGenreSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class FastAPISearchMovieSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    description = serializers.CharField()
+    release_date = serializers.DateField()
+
+    duration = serializers.IntegerField(
+        required=False,
+        allow_null=True
+    )
+
+    poster = serializers.CharField(
+        required=False,
+        allow_null=True
+    )
+
+    genres = FastAPIGenreSerializer(many=True)
+
+
+class FastAPISearchResponseSerializer(serializers.Serializer):
+    items = FastAPISearchMovieSerializer(many=True)
+    total = serializers.IntegerField()
