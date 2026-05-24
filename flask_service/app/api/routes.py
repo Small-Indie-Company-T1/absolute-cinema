@@ -3,7 +3,13 @@ from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
 from ..schemas.review import ErrorResponse, ReviewStatusUpdate, ReviewCreate
-from ..services.django_client import check_movie_exists
+from ..services.django_client import (
+    DjangoConnectionError, 
+    DjangoIntegrationError, 
+    DjangoTimeoutError, 
+    MovieNotFoundError, 
+    check_movie_exists
+)
 from ..repositories import review_repository
 
 logger = logging.getLogger(__name__)
@@ -79,15 +85,39 @@ def create_review():
             )
         ), 422
 
-    movie_exists = check_movie_exists(validated.movie_id)
-    if not movie_exists:
-        logger.warning(f"Movie {validated.movie_id} not found in Django")
+    try:
+        check_movie_exists(validated.movie_id)
+    except MovieNotFoundError:
         return jsonify(
             ErrorResponse.build(
                 code='movie_not_found',
-                message=f"Movie with id {validated.movie_id} does not exist"
+                message=f'Movie with id {validated.movie_id} does not exist'
             )
         ), 404
+    except DjangoTimeoutError:
+        logger.error(f'Django API timeout while checking movie with id {validated.movie_id}')
+        return jsonify(
+            ErrorResponse.build(
+                code='integration_timeout',
+                message='Django service is not responding'
+            )
+        ), 503
+    except DjangoConnectionError:
+        logger.error("Cannot connect to Django")
+        return jsonify(
+            ErrorResponse.build(
+                code='integration_unavailable',
+                message='Django service is unavailable'
+            )
+        ), 503
+    except DjangoIntegrationError as e:
+        logger.error(f'Django integration error: {e}')
+        return jsonify(
+            ErrorResponse.build(
+                code='integration_error',
+                message='Error communcation with Django service'
+            )
+        ), 503
 
     # TODO: ДОБАВИТЬ СЕМАНТИКУ В РЕПОЗИТОРИИ
     review = review_repository.create_review(
