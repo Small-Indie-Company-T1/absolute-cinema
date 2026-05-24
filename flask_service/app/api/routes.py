@@ -36,13 +36,23 @@ def list_reviews():
     Получить список отзывов по фильму.
     Query param: movie_id (обязательный)
     """
-    movie_id = request.args.get("movie_id")
+    movie_id_str = request.args.get("movie_id")
 
-    if movie_id is None:
+    if movie_id_str is None:
         return jsonify(
             ErrorResponse.build(
                 code='missing_parameter',
                 message='Query parameter "movie_id" is required'
+            )
+        ), 400
+    
+    try:
+        movie_id = int(movie_id_str)
+    except ValueError:
+        return jsonify(
+            ErrorResponse.build(
+                code='invalid_parameter',
+                message='Query parameter "movid_id" must be an integer'
             )
         ), 400
 

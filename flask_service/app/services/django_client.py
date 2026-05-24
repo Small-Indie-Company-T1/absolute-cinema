@@ -52,17 +52,25 @@ def check_movie_exists(movie_id: int) -> bool:
             raise DjangoIntegrationError(
                 f'Django API returned {response.status_code}: {response.text}'
             )
+        
+    except MovieNotFoundError:
+        raise
 
     except httpx.TimeoutException as e:
         logger.error(f"Timeout connecting to Django API for movie {movie_id}")
         raise DjangoTimeoutError(
             f'Timeout while checking movie {movie_id} in django'
         ) from e
+    
     except httpx.ConnectError as e:
         logger.error(f"Cannot connect to Django API at {django_url}")
         raise DjangoConnectionError(
             f'Cannot connect to Django API at {django_url}'
         ) from e
+    
+    except DjangoIntegrationError:
+        raise
+
     except Exception as e:
         logger.error(f"Unexpected error checking movie {movie_id}: {e}")
         raise DjangoIntegrationError(

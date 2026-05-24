@@ -24,6 +24,12 @@ class Review(db.Model):
     )
 
     def to_dict(self) -> dict:
+        created_at_str = None
+        if self.created_at is not None:
+            if self.created_at.tzinfo is not None:
+                created_at_str = self.created_at.replace(tzinfo=None).isoformat() + 'Z'
+            else:
+                created_at_str = self.created_at.isoformat() + 'Z'
         return {
             'id': self.id,
             'movie_id': self.movie_id,
@@ -31,7 +37,5 @@ class Review(db.Model):
             'rating': self.rating,
             'text': self.text,
             'status': self.status,
-            'created_at': self.created_at.isoformat() + 'Z'
-            if self.created_at is not None
-            else None,
+            'created_at': created_at_str
         }
