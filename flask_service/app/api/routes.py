@@ -2,9 +2,9 @@ import logging
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
-from ..schemas.review import ErrorResponse
+from ..schemas.review import ErrorResponse, ReviewStatusUpdate, ReviewCreate
 from ..services.django_client import check_movie_exists
-from ..schemas.review import ReviewCreate
+from ..repositories import review_repository
 
 logger = logging.getLogger(__name__)
 
@@ -34,15 +34,14 @@ def list_reviews():
 
     if movie_id is None:
         return jsonify(
-            ErrorResponse(
-                error="missing_parameter",
-                detail="Query parameter 'movie_id' is required",
-                status_code=400,
-            ).model_dump()
+            ErrorResponse.build(
+                code='missing_parameter',
+                message='Query parameter "movie_id" is required'
+            )
         ), 400
 
-    # TODO: get_reviews_by_movie
-    reviews = []
+    # TODO: ОПИСАТЬ СЕМАНТИКУ В РЕПОЗИТОРИИ
+    reviews = review_repository.get_reviews_by_movie(movie_id)
 
     return jsonify(
         {
@@ -62,11 +61,10 @@ def create_review():
 
     if payload is None:
         return jsonify(
-            ErrorResponse(
-                error="invalid_json",
-                detail="Request body must be a valid json",
-                status_code=400,
-            ).model_dump()
+            ErrorResponse.build(
+                code='invalid_json',
+                message='Request body must be a valid json'
+            )
         ), 400
 
     try:
@@ -74,23 +72,30 @@ def create_review():
     except ValidationError as e:
         logger.warning(f"Validation error while creating review: {e.errors()}")
         return jsonify(
-            ErrorResponse(
-                error="validation_error", detail="Invalid review data", status_code=422
-            ).model_dump()
+            ErrorResponse.build(
+                code='validation_error',
+                message='Invalid review data',
+                details=e.errors()
+            )
         ), 422
 
     movie_exists = check_movie_exists(validated.movie_id)
     if not movie_exists:
         logger.warning(f"Movie {validated.movie_id} not found in Django")
         return jsonify(
-            ErrorResponse(
-                error="movie_not_found",
-                detail=f"Movie with id {validated.movie_id} does not exist",
-                status_code=404,
-            ).model_dump()
+            ErrorResponse.build(
+                code='movie_not_found',
+                message=f"Movie with id {validated.movie_id} does not exist"
+            )
         ), 404
 
-    # TODO: вызвать create_review
+    # TODO: ДОБАВИТЬ СЕМАНТИКУ В РЕПОЗИТОРИИ
+    review = review_repository.create_review(
+        movie_id=validated.movie_id,
+        user_id=validated.user_id,
+        rating=validated.rating,
+        text=validated.text
+    )
 
     logger.info(
         f"Review created: movie_id={validated.movie_id}, user_id={validated.user_id}"
@@ -99,15 +104,7 @@ def create_review():
     return jsonify(
         {
             "status": "success",
-            "data": {
-                "id": 1,
-                "movie_id": validated.movie_id,
-                "user_id": validated.user_id,
-                "rating": validated.rating,
-                "text": validated.text,
-                "status": "pending",
-                "created_at": "2024-01-01T12:00:00Z",
-            },
+            "data": review.to_dict()
         }
     ), 201
 
@@ -121,30 +118,55 @@ def update_review_status(review_id: int):
     payload = request.get_json(silent=True)
     if payload is None:
         return jsonify(
-            ErrorResponse(
-                error="invalid_json",
-                detail="Request body must be a valid json",
-                status_code=400,
-            ).model_dump()
+            ErrorResponse.build(
+                code='invalid_json',
+                message="Request body must be a valid json"
+            )
         ), 400
 
-    new_status = payload.get("status")  # type: ignore
-    if new_status not in ("active", "hidden"):
+    try:
+        validated = ReviewStatusUpdate(**payload)
+    except ValidationError as e:
+        logger.warning(f'Validation error while updating review status: {e.errors()}')
         return jsonify(
-            ErrorResponse(
-                error="invalid_status",
-                detail="Status must be 'active' or 'hidden'",
-                status_code=422,
-            ).model_dump()
+            ErrorResponse.build(
+                code='validation_error',
+                message='Invalid status data',
+                details=e.errors()
+            )
         ), 422
 
-    # TODO: update_review_status
+    # TODO: ОПИСАТЬ СЕМАНТИКУ В РЕПОЗИТОРИИ
+    review = review_repository.update_review_status(review_id, status=validated.status)
+    if review is None:
+        return jsonify(
+            ErrorResponse.build(
+                code='review_not_found',
+                message=f'Review with id {review_id} not found'
+            )
+        ), 404
 
-    logger.info(f"Review {review_id} status updated to {new_status}")
+    logger.info(f"Review {review_id} status updated to {validated.status}")
 
     return jsonify(
         {
             "status": "success",
-            "data": {"id": review_id, "new_status": new_status},
+            "data": review.to_dict(),
         }
     ), 200
+
+@api_bp.get("/reviews/<int:review_id>")
+def get_review(review_id: int):
+    review = review_repository.get_review_by_id(review_id)
+    if review is None:
+        return jsonify(
+            ErrorResponse.build(
+                code='review_not_found',
+                message=f'Review with id {review_id} not found'
+            )
+        ), 404
+    
+    return jsonify({
+        'status': 'success',
+        'data': review.to_dict()
+    }), 200
