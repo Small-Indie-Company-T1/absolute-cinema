@@ -13,8 +13,7 @@ def register_error_handlers(app: Flask):
     def handle_not_found(error):
         return jsonify(
             ErrorResponse.build(
-                code='not_found',
-                message='The requested resource was not found'
+                code="not_found", message="The requested resource was not found"
             )
         ), 404
 
@@ -22,18 +21,15 @@ def register_error_handlers(app: Flask):
     def handle_method_not_allowed(error):
         return jsonify(
             ErrorResponse.build(
-                code='method_not_allowed',
-                message='HTTP method not allowed for this endpoint'
+                code="method_not_allowed",
+                message="HTTP method not allowed for this endpoint",
             )
         ), 405
 
     @app.errorhandler(400)
     def handle_bad_request(error):
         return jsonify(
-            ErrorResponse.build(
-                code='bad_request',
-                message='Invalid request format'
-            )
+            ErrorResponse.build(code="bad_request", message="Invalid request format")
         ), 400
 
     @app.errorhandler(ValidationError)
@@ -41,9 +37,9 @@ def register_error_handlers(app: Flask):
         """Обработчик ошибок валидации Pydantic"""
         return jsonify(
             ErrorResponse.build(
-                code='validation_error',
-                message='Invalid data provided',
-                details=error.errors()
+                code="validation_error",
+                message="Invalid data provided",
+                details=error.errors(),
             )
         ), 422
 
@@ -52,8 +48,7 @@ def register_error_handlers(app: Flask):
         """Обработчик всех HTTP исключений"""
         return jsonify(
             ErrorResponse.build(
-                code=error.name.lower().replace(' ', '_'),
-                message=error.description
+                code=error.name.lower().replace(" ", "_"), message=error.description
             )
         ), error.code
 
@@ -63,7 +58,6 @@ def register_error_handlers(app: Flask):
         logger.error(f"Unexpected error: {error}", exc_info=True)
         return jsonify(
             ErrorResponse.build(
-                code='internal_server_error',
-                message='An unexpected error occured'
+                code="internal_server_error", message="An unexpected error occured"
             )
         ), 500

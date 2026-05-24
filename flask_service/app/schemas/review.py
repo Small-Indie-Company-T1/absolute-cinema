@@ -30,23 +30,23 @@ class ReviewResponse(BaseModel):
     status: str
     created_at: str
 
+
 class ReviewStatusUpdate(BaseModel):
     """Схема для обновления статуса отзыва"""
-    status: Literal['active', 'hidden']
+
+    status: Literal["active", "hidden"]
+
 
 class ErrorResponse(BaseModel):
     """Единый формат ошибок"""
 
-    status: str = 'error'
+    status: str = "error"
     error: dict = Field(...)
 
     @staticmethod
     def build(code: str, message: str, details: Any = None) -> dict:
         """Вспомогательная функция для создания ошибки"""
-        payload: dict = {
-            'status': 'error',
-            'error': {'code': code, 'message': message}
-        }
+        payload: dict = {"status": "error", "error": {"code": code, "message": message}}
         if details is not None:
-            payload['error']['details'] = details
+            payload["error"]["details"] = details
         return payload
