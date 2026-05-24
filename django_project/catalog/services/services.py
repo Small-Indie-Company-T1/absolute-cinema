@@ -98,3 +98,74 @@ class MovieService:
         except (requests.RequestException, ValueError) as e:
             logger.exception("Failed to connect or parse response from FastAPI recommendations service")
             raise RecommendationServiceError(f"Failed to fetch recommendations: {str(e)}")
+
+    @staticmethod
+    def search_movies(
+        q: str | None = None,
+        genre_id: int | None = None,
+        year_from: int | None = None,
+        year_to: int | None = None,
+        limit: int = 10
+    ):
+        fastapi_url = getattr(
+            settings,
+            "FASTAPI_SERVICE_URL",
+            "http://localhost:8001"
+        )
+
+        endpoint = f"{fastapi_url}/api/v1/search"
+
+        logger.info(
+            f"Searching movies: "
+            f"q={q}, genre_id={genre_id}"
+        )
+
+        params = {
+            "q": q,
+            "genre_id": genre_id,
+            "year_from": year_from,
+            "year_to": year_to,
+            "limit": limit,
+        }
+
+        params = {
+            key: value
+            for key, value in params.items()
+            if value is not None
+        }
+
+        try:
+            response = requests.get(
+                endpoint,
+                params=params,
+                timeout=5.0
+            )
+
+            if response.status_code != 200:
+                logger.error(
+                    f"Search service returned "
+                    f"{response.status_code}"
+                )
+
+                raise RecommendationServiceError(
+                    f"Search service returned "
+                    f"{response.status_code}"
+                )
+
+            logger.info(
+                "Search request completed successfully"
+            )
+
+            return response.json()
+
+        except (
+            requests.RequestException,
+            ValueError
+        ) as e:
+            logger.exception(
+                "Failed search request"
+            )
+
+            raise RecommendationServiceError(
+                f"Search service unavailable: {str(e)}"
+            )
