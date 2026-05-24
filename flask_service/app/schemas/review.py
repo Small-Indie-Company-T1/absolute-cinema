@@ -1,3 +1,5 @@
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -28,10 +30,23 @@ class ReviewResponse(BaseModel):
     status: str
     created_at: str
 
+class ReviewStatusUpdate(BaseModel):
+    """Схема для обновления статуса отзыва"""
+    status: Literal['active', 'hidden']
 
 class ErrorResponse(BaseModel):
     """Единый формат ошибок"""
 
-    error: str
-    detail: str | None = None
-    status_code: int
+    status: str = 'error'
+    error: dict = Field(...)
+
+    @staticmethod
+    def build(code: str, message: str, details: Any = None) -> dict:
+        """Вспомогательная функция для создания ошибки"""
+        payload: dict = {
+            'status': 'error',
+            'error': {'code': code, 'message': message}
+        }
+        if details is not None:
+            payload['error']['details'] = details
+        return payload
