@@ -254,18 +254,27 @@ FastAPI используется как production-ready async backend.
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <repo_url>
+git clone https://github.com/Small-Indie-Company-T1/absolute-cinema.git
 cd absolute-cinema
-
-## Запуск
-
-1. Установить uv
-2. Установить зависимости
-```bash
-uv sync
 ```
-3. Создать `.env` по образцу `.env.example`
-4. Запустить сервис
+### 2. Запуск
+Откройте три терминала:
+
+Первый
 ```bash
+cd django_project
+uv sync
+uv run python manage.py runserver 8000
+```
+Второй
+```bash
+cd fastapi_service
+uv sync
+uv run fastapi dev main.py --port 8001
+```
+Третий
+```bash
+cd flask_service
+uv sync
 uv run python run.py
 ```
