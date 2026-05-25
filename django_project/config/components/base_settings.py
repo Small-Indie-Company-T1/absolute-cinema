@@ -12,3 +12,4 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication"
     ],
 }
+FASTAPI_SERVICE_URL = "http://localhost:8001"
