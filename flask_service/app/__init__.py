@@ -4,6 +4,7 @@ from .config import Config
 from .api.routes import api_bp
 from .errors.handlers import register_error_handlers
 from .extensions import db, migrate
+from .models import Review
 
 
 def register_blueprints(app: Flask):
@@ -19,9 +20,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     register_extensions(app)
-
-    from .models import Review
-
     register_blueprints(app)
     register_error_handlers(app)
 
